@@ -22,12 +22,15 @@
 
 typedef struct string_t {
     char* ptr;
-    size_t size;
+    size_t size; /* always equal to strlen(ptr) */
     size_t cap;
 } string_t;
 
-_STRING_NODISCARD  string_t str_make(const char* str);
+#define STRING_EMPTY (string_t){ NULL, 0, 1 };
+
+_STRING_NODISCARD string_t str_make(const char* str);
 _STRING_NODISCARD string_t str_make_n(const char* str, size_t size);
+void str_assign(string_t* string, const char* str);
 void str_exchg(string_t* first, string_t* second);
 void str_free(string_t* string);
 char str_at(const string_t* string, size_t idx);
@@ -52,5 +55,9 @@ void str_app(string_t* dest, const string_t* src);
 void str_app_chars(string_t* dest, const char* src);
 void str_clear(string_t* string);
 void str_reset(string_t* string);
+const char* str_end(const string_t* string);
+int str_is_empty(const string_t* string);
+_STRING_NODISCARD string_t str_move(string_t* string);
+void str_set(string_t* dest, const string_t* src);
 
 #endif

@@ -31,6 +31,14 @@ string_t str_make_n(const char* str, size_t size) {
     return out;
 }
 
+void str_assign(string_t* string, const char* str) {
+    const size_t str_len = strlen(str);
+    if (str_len + 1 > string->cap)
+        _string_detail_increase_cap(string, str_len + 1);
+    memcpy(string->ptr, str, str_len + 1);
+    string->size = str_len;
+}
+
 void str_exchg(string_t* first, string_t* second) {
     string_t buf = *first;
     *first = *second;
@@ -212,7 +220,25 @@ void str_clear(string_t* string) {
 
 void str_reset(string_t* string) {
     free(string->ptr);
-    string->ptr = NULL;
-    string->cap = 0;
-    string->size = 0;
+    *string = STRING_EMPTY;
+}
+
+const char* str_end(const string_t* string) {
+    return string->ptr + string->size + 1;
+}
+
+int str_is_empty(const string_t* string) {
+    return string->size == 0;
+}
+
+string_t str_move(string_t* string) {
+    string_t out = *string;
+    *string = STRING_EMPTY;
+    return out;
+}
+
+void str_set(string_t* dest, const string_t* src) {
+    if (src->size + 1 > dest->cap)
+        _string_detail_increase_cap(dest, src->size + 1);
+    memcpy(dest->ptr, src->ptr, src->size + 1);
 }
