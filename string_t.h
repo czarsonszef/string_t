@@ -51,8 +51,6 @@ char* str_substr_write(const string_t* src, char* buf, size_t idx_first, size_t 
 char* str_substr_write_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last);
 char* str_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max);
 char* str_substr_write_n_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max);
-void str_app(string_t* dest, const string_t* src);
-void str_app_chars(string_t* dest, const char* src);
 void str_clear(string_t* string);
 void str_reset(string_t* string);
 const char* str_end(const string_t* string);
@@ -66,6 +64,8 @@ void _string_detail_set_cchp(string_t* string, const char* str);
 void _string_detail_set_cstp(string_t* dest, const string_t* src);
 int _string_detail_same_cchp(const string_t* string, const char* str);
 int _string_detail_same_cstp(const string_t* first, const string_t* second);
+void _string_detail_app_cchp(string_t* dest, const char* src);
+void _string_detail_app_cstp(string_t* dest, const string_t* src);
 
 #define str_set(dest, src) _Generic((src),      \
     char*: _string_detail_set_cchp,             \
@@ -77,5 +77,9 @@ int _string_detail_same_cstp(const string_t* first, const string_t* second);
     string_t*: _string_detail_same_cstp         \
 )((string), (str))
 
+#define str_app(dest, src) _Generic((src),      \
+    char*: _string_detail_app_cchp,             \
+    string_t*: _string_detail_app_cstp          \
+)((dest), (src))
 
 #endif

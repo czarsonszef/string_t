@@ -227,17 +227,17 @@ char* str_substr_write_n_nt(const string_t* src, char* buf, size_t idx_first, si
     return buf;
 }
 
-void str_app(string_t* dest, const string_t* src) {
-    _string_detail_increase_cap(dest, dest->size + src->size + 1);
-    memcpy(dest->ptr + dest->size, src->ptr, src->size + 1);
-    dest->size += src->size;
-}
-
-void str_app_chars(string_t* dest, const char* src) {
+void _string_detail_app_cchp(string_t* dest, const char* src) {
     const size_t src_len = strlen(src);
     _string_detail_increase_cap(dest, src_len + dest->size + 1);
     memcpy(dest->ptr + dest->size, src, src_len + 1);
     dest->size += src_len;
+}
+
+void _string_detail_app_cstp(string_t* dest, const string_t* src) {
+    _string_detail_increase_cap(dest, dest->size + src->size + 1);
+    memcpy(dest->ptr + dest->size, src->ptr, src->size + 1);
+    dest->size += src->size;
 }
 
 void str_clear(string_t* string) {
