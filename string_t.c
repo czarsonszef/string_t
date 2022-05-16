@@ -76,7 +76,11 @@ char* str_at(const string_t* string, size_t idx) {
     return &string->ptr[idx];
 }
 
-int str_equal(const string_t* first, const string_t* second) {
+int _string_detail_same_cchp(const string_t* string, const char* str) {
+    return !strcmp(string->ptr, str);
+}
+
+int _string_detail_same_cstp(const string_t* first, const string_t* second) {
     return !strcmp(first->ptr, second->ptr);
 }
 

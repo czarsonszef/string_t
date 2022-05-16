@@ -35,7 +35,6 @@ _STRING_NODISCARD string_t str_copy(const string_t* string);
 void str_exchg(string_t* first, string_t* second);
 void str_free(string_t* string);
 char* str_at(const string_t* string, size_t idx);
-int str_equal(const string_t* first, const string_t* second);
 char str_pop(string_t* string);
 size_t str_find(const string_t* string, char c);
 size_t str_rfind(const string_t* string, char c);
@@ -65,10 +64,18 @@ int str_fwrite(const string_t* src, FILE* fp);
 
 void _string_detail_set_cchp(string_t* string, const char* str);
 void _string_detail_set_cstp(string_t* dest, const string_t* src);
+int _string_detail_same_cchp(const string_t* string, const char* str);
+int _string_detail_same_cstp(const string_t* first, const string_t* second);
 
 #define str_set(dest, src) _Generic((src),      \
     char*: _string_detail_set_cchp,             \
     string_t*: _string_detail_set_cstp          \
 )((dest), (src))
+
+#define str_same(string, str) _Generic((str),   \
+    char*: _string_detail_same_cchp,            \
+    string_t*: _string_detail_same_cstp         \
+)((string), (str))
+
 
 #endif
