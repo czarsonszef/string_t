@@ -1,6 +1,9 @@
 #include "string_t.h"
 
 static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
+    if (string->cap == 0)
+        string->cap = 1;
+
     while (string->cap < new_cap)
         string->cap *= STRING_MULTIPLIER;
 

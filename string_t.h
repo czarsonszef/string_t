@@ -26,7 +26,7 @@ typedef struct string_t {
     size_t cap;
 } string_t;
 
-#define STRING_EMPTY (string_t){ NULL, 0, 1 };
+#define STRING_EMPTY (string_t){ NULL, 0, 0 };
 
 _STRING_NODISCARD string_t str_make(const char* str);
 _STRING_NODISCARD string_t str_make_n(const char* str, size_t size);
