@@ -107,7 +107,7 @@ void string_set_cap(string_t* string, size_t new_cap) {
     } else if (new_cap < string->cap) {
         string->cap = new_cap;
         string->size = new_cap - 1;
-        string-> ptr = realloc(string->ptr, sizeof(char) * new_cap);
+        string->ptr = realloc(string->ptr, sizeof(char) * new_cap);
         string->ptr[string->size] = '\0';
     }
 }
@@ -172,16 +172,14 @@ void string_substr_write_n(const string_t* src, char* buf, size_t idx_first, siz
 
 void string_app(string_t* dest, const string_t* src) {
     _string_detail_increase_cap(dest, dest->size + src->size + 1);
-    char* const dest_last = dest->ptr + dest->size;
-    memcpy(dest_last, src->ptr, src->size + 1);
+    memcpy(dest->ptr + dest->size, src->ptr, src->size + 1);
     dest->size += src->size;
 }
 
 void string_app_chars(string_t* dest, const char* src) {
     const size_t src_len = strlen(src);
     _string_detail_increase_cap(dest, src_len + dest->size + 1);
-    char* const dest_last = dest->ptr + dest->size;
-    memcpy(dest_last, src, src_len + 1);
+    memcpy(dest->ptr + dest->size, src, src_len + 1);
     dest->size += src_len;
 }
 
