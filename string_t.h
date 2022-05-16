@@ -62,6 +62,6 @@ _STRING_NODISCARD string_t str_move(string_t* string);
 void str_set(string_t* dest, const string_t* src);
 int str_fgetln(string_t* dest, FILE* fp);
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
-int str_writeln(const string_t* src, FILE* fp);
+int str_fwrite(const string_t* src, FILE* fp);
 
 #endif

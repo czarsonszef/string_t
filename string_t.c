@@ -253,6 +253,7 @@ int str_fgetln(string_t* dest, FILE* fp) {
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max) {
     size_t len;
     ++max;
+
     if (max > dest->cap) {
         _string_detail_increase_cap(dest, max);
         len = dest->cap;
