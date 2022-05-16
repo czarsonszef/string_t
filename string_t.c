@@ -245,3 +245,22 @@ void str_set(string_t* dest, const string_t* src) {
         _string_detail_increase_cap(dest, src->size + 1);
     memcpy(dest->ptr, src->ptr, src->size + 1);
 }
+
+int str_fgetln(string_t* dest, FILE* fp) {
+    return fgets(dest->ptr, dest->cap, fp) != NULL;
+}
+
+int str_fgetln_n(string_t* dest, FILE* fp, size_t max) {
+    size_t len;
+    if (max + 1 > dest->cap) {
+        _string_detail_increase_cap(dest, max + 1);
+        len = dest->cap;
+    } else
+        len = max + 1;
+
+    return fgets(dest->ptr, len, fp) != NULL;
+}
+
+int str_fwrite(string_t* src, FILE* fp) {
+    fputs(src->ptr, fp);
+}

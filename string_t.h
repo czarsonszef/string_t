@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <assert.h>
+#include <stdio.h>
 
 #define STRING_NPOS (size_t)-1
 
@@ -59,5 +60,8 @@ const char* str_end(const string_t* string);
 int str_is_empty(const string_t* string);
 _STRING_NODISCARD string_t str_move(string_t* string);
 void str_set(string_t* dest, const string_t* src);
+int str_fgetln(string_t* dest, FILE* fp);
+int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
+int str_writeln(string_t* src, FILE* fp);
 
 #endif
