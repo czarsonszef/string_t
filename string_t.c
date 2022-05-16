@@ -50,8 +50,10 @@ int string_equal(const string_t* first, const string_t* second) {
     return !strcmp(first->ptr, second->ptr);
 }
 
-void string_pop(string_t* string) {
-    string->ptr[--string->size] = '\0';
+char string_pop(string_t* string) {
+    const char out = string->ptr[--string->size];
+    string->ptr[string->size] = '\0';
+    return out;
 }
 
 size_t string_find(const string_t* string, char c) {
@@ -132,42 +134,63 @@ string_t string_substr(const string_t* src, size_t idx_first, size_t idx_last) {
     return out;
 }
 
-void string_write(const string_t* src, char* buf) {
+char* string_write(const string_t* src, char* buf) {
     memcpy(buf, src->ptr, src->size + 1);
+    return buf;
 }
 
-void string_write_nt(const string_t* src, char* buf) {
+char* string_write_nt(const string_t* src, char* buf) {
     memcpy(buf, src->ptr, src->size);
+    return buf;
 }
 
-void string_write_n(const string_t* src, char* buf, size_t max) {
+char* string_write_n(const string_t* src, char* buf, size_t max) {
     size_t len;
     if (src->size >= max) len = max;
     else len = src->size;
     memcpy(buf, src->ptr, len);
     buf[len] = '\0';
+    return buf;
 }
 
-void string_write_n_nt(const string_t* src, char* buf, size_t max) {
+char* string_write_n_nt(const string_t* src, char* buf, size_t max) {
     size_t len;
     if (src->size >= max) len = max;
     else len = src->size;
     memcpy(buf, src->ptr, len);
+    return buf;
 }
 
-void string_substr_write(const string_t* src, char* buf, size_t idx_first, size_t idx_last) {
+char* string_substr_write(const string_t* src, char* buf, size_t idx_first, size_t idx_last) {
     assert(idx_last >= idx_first && idx_last <= src->size && "string_substr_write(): idxes out of range");
     const size_t len = idx_last - idx_first;
     memcpy(buf, src->ptr + idx_first, len);
     buf[len] = '\0';
+    return buf;
 }
 
-void string_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
+char* string_substr_write_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last) {
+    assert(idx_last >= idx_first && idx_last <= src->size && "string_substr_write(): idxes out of range");
+    const size_t len = idx_last - idx_first;
+    memcpy(buf, src->ptr + idx_first, len);
+    return buf;
+}
+
+char* string_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
     assert(idx_last >= idx_first && idx_last <= src->size);
     size_t len = idx_last - idx_first;
     if (len > max) len = max;
     memcpy(buf, src->ptr + idx_first, len);
     buf[len] = '\0';
+    return buf;
+}
+
+char* string_substr_write_n_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
+    assert(idx_last >= idx_first && idx_last <= src->size);
+    size_t len = idx_last - idx_first;
+    if (len > max) len = max;
+    memcpy(buf, src->ptr + idx_first, len);
+    return buf;
 }
 
 void string_app(string_t* dest, const string_t* src) {
