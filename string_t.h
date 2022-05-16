@@ -26,7 +26,8 @@ typedef struct string_t {
     size_t cap;
 } string_t;
 
-_STRING_NODISCARD string_t string_make(const char* str, size_t size);
+_STRING_NODISCARD string_t string_make(const char* str);
+_STRING_NODISCARD string_t string_make_n(const char* str, size_t size);
 void string_exchg(string_t* first, string_t* second);
 void string_free(string_t* string);
 char string_at(const string_t* string, size_t idx);

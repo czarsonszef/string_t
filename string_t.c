@@ -7,15 +7,24 @@ static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
     string->ptr = realloc(string->ptr, new_cap * sizeof(char));
 }
 
-string_t string_make(const char* str, size_t size) {
+string_t string_make(const char* str) {
+    const size_t str_len = strlen(str);
+    string_t out = {
+        .ptr = malloc(sizeof(char) * (str_len + 1)),
+        .size = str_len,
+        .cap = str_len + 1
+    };
+
+    memcpy(out.ptr, str, str_len + 1);
+    return out;
+}
+
+string_t string_make_n(const char* str, size_t size) {
     string_t out = {
         .ptr = malloc(sizeof(char) * (size + 1)),
         .size = size,
         .cap = size + 1
     };
-
-    if (out.ptr == NULL)
-        exit(-1);
 
     memcpy(out.ptr, str, size);
     out.ptr[size] = '\0';
