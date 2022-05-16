@@ -34,12 +34,31 @@ string_t str_make_n(const char* str, size_t size) {
     return out;
 }
 
-void str_assign(string_t* string, const char* str) {
+string_t str_copy(const string_t* string) {
+    string_t out = {
+        .ptr = malloc(sizeof(char) * (string->size + 1)),
+        .size = string->size,
+        .cap = string->size + 1
+    };
+
+    memcpy(out.ptr, string->ptr, out.cap);
+    return out;
+}
+
+void _string_detail_set_cchp(string_t* string, const char* str) {
     const size_t str_len = strlen(str);
     if (str_len + 1 > string->cap)
         _string_detail_increase_cap(string, str_len + 1);
     memcpy(string->ptr, str, str_len + 1);
     string->size = str_len;
+}
+
+void _string_detail_set_cstp(string_t* dest, const string_t* src) {
+    if (src->size + 1 > dest->cap)
+        _string_detail_increase_cap(dest, src->size + 1);
+
+    memcpy(dest->ptr, src->ptr, src->size + 1);
+    dest->size = src->size;
 }
 
 void str_exchg(string_t* first, string_t* second) {
@@ -52,9 +71,9 @@ void str_free(string_t* string) {
     free(string->ptr);
 }
 
-char str_at(const string_t* string, size_t idx) {
+char* str_at(const string_t* string, size_t idx) {
     assert(!(idx >= string->size) && "string_at(): idx out of range");
-    return string->ptr[idx];
+    return &string->ptr[idx];
 }
 
 int str_equal(const string_t* first, const string_t* second) {
@@ -240,12 +259,6 @@ string_t str_move(string_t* string) {
     return out;
 }
 
-void str_set(string_t* dest, const string_t* src) {
-    if (src->size + 1 > dest->cap)
-        _string_detail_increase_cap(dest, src->size + 1);
-    memcpy(dest->ptr, src->ptr, src->size + 1);
-}
-
 int str_fgetln(string_t* dest, FILE* fp) {
     return fgets(dest->ptr, dest->cap, fp) != NULL;
 }
@@ -265,4 +278,8 @@ int str_fgetln_n(string_t* dest, FILE* fp, size_t max) {
 
 int str_fwrite(const string_t* src, FILE* fp) {
     return fputs(src->ptr, fp);
+}
+
+int str_suf(const string_t* src, const string_t* suf) {
+
 }

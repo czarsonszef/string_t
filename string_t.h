@@ -31,10 +31,10 @@ typedef struct string_t {
 
 _STRING_NODISCARD string_t str_make(const char* str);
 _STRING_NODISCARD string_t str_make_n(const char* str, size_t size);
-void str_assign(string_t* string, const char* str);
+_STRING_NODISCARD string_t str_copy(const string_t* string);
 void str_exchg(string_t* first, string_t* second);
 void str_free(string_t* string);
-char str_at(const string_t* string, size_t idx);
+char* str_at(const string_t* string, size_t idx);
 int str_equal(const string_t* first, const string_t* second);
 char str_pop(string_t* string);
 size_t str_find(const string_t* string, char c);
@@ -59,9 +59,16 @@ void str_reset(string_t* string);
 const char* str_end(const string_t* string);
 int str_is_empty(const string_t* string);
 _STRING_NODISCARD string_t str_move(string_t* string);
-void str_set(string_t* dest, const string_t* src);
 int str_fgetln(string_t* dest, FILE* fp);
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
 int str_fwrite(const string_t* src, FILE* fp);
+
+void _string_detail_set_cchp(string_t* string, const char* str);
+void _string_detail_set_cstp(string_t* dest, const string_t* src);
+
+#define str_set(dest, src) _Generic((src),      \
+    char*: _string_detail_set_cchp,             \
+    string_t*: _string_detail_set_cstp          \
+)((dest), (src))
 
 #endif
