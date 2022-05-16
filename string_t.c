@@ -4,7 +4,7 @@ static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
     while (string->cap < new_cap)
         string->cap *= STRING_MULTIPLIER;
 
-    string->ptr = realloc(string->ptr, new_cap * sizeof(char));
+    string->ptr = realloc(string->ptr, sizeof(char) * string->cap);
 }
 
 string_t string_make(const char* str) {
@@ -39,13 +39,10 @@ void string_exchg(string_t* first, string_t* second) {
 
 void string_free(string_t* string) {
     free(string->ptr);
-    string->ptr = NULL;
-    string->cap = 0ull;
-    string->size = 0ull;
 }
 
 char string_at(const string_t* string, size_t idx) {
-    assert(!(idx >= string->size));
+    assert(!(idx >= string->size) && "string_at(): idx out of range");
     return string->ptr[idx];
 }
 
@@ -58,7 +55,7 @@ void string_pop(string_t* string) {
 }
 
 size_t string_find(const string_t* string, char c) {
-    size_t i = 0ull;
+    size_t i = 0;
     for (; i < string->size; ++i)
         if (string->ptr[i] == c)
             return i;
@@ -67,8 +64,8 @@ size_t string_find(const string_t* string, char c) {
 }
 
 size_t string_rfind(const string_t* string, char c) {
-    size_t i = string->size - 1ull;
-    for (; i >= 0ull; --i)
+    size_t i = string->size - 1;
+    for (; i >= 0; --i)
         if (string->ptr[i] == c)
             return i;
     
@@ -78,10 +75,10 @@ size_t string_rfind(const string_t* string, char c) {
 size_t string_find_nth(const string_t* string, char c, size_t n) {
     assert(n > 0);
 
-    size_t i = 0ull;
+    size_t i = 0;
     for (; i < string->size; ++i)
         if (string->ptr[i] == c) {
-            if (n == 1ull)
+            if (n == 1)
                 return i;
             --n;
         }
@@ -92,10 +89,10 @@ size_t string_find_nth(const string_t* string, char c, size_t n) {
 size_t string_rfind_nth(const string_t* string, char c, size_t n) {
     assert(n > 0);
 
-    size_t i = string->size - 1ull;
-    for (; i >= 0ull; --i)
+    size_t i = string->size - 1;
+    for (; i >= 0; --i)
         if (string->ptr[i] == c) {
-            if (n == 1ull)
+            if (n == 1)
                 return i;
             --n;
         }
@@ -106,11 +103,11 @@ size_t string_rfind_nth(const string_t* string, char c, size_t n) {
 void string_set_cap(string_t* string, size_t new_cap) {
     if (new_cap > string->cap) {
         string->cap = new_cap;
-        realloc(string->ptr, sizeof(char) * new_cap);
+        string->ptr = realloc(string->ptr, sizeof(char) * new_cap);
     } else if (new_cap < string->cap) {
         string->cap = new_cap;
-        string->size = new_cap - 1ull;
-        realloc(string->ptr, sizeof(char) * new_cap);
+        string->size = new_cap - 1;
+        string-> ptr = realloc(string->ptr, sizeof(char) * new_cap);
         string->ptr[string->size] = '\0';
     }
 }
@@ -121,12 +118,12 @@ void string_add_cap(string_t* string, size_t n) {
 
 string_t string_substr(const string_t* src, size_t idx_first, size_t idx_last) {
     /* [first, last) */
-    assert(idx_last >= idx_first && idx_last <= src->size);
+    assert(idx_last >= idx_first && idx_last <= src->size && "string_substre(): idxes out of range");
 
-    const size_t len = idx_last - idx_first + 1ull;
+    const size_t len = idx_last - idx_first + 1;
     string_t out = {
         .ptr = malloc(sizeof(char) * len),
-        .size = len - 1ull,
+        .size = len - 1,
         .cap = len
     };
 
@@ -135,38 +132,66 @@ string_t string_substr(const string_t* src, size_t idx_first, size_t idx_last) {
     return out;
 }
 
-void string_substr_write(const string_t* src, char* buf, size_t idx_first, size_t idx_last) {
-    assert(idx_last >= idx_first && idx_last <= src->size);
-
-    const size_t len = idx_last - idx_first + 1ull;
-    memcpy(buf, src->ptr + idx_first, len - 1);
-    buf[len - 1] = '\0';
+void string_write(const string_t* src, char* buf) {
+    memcpy(buf, src->ptr, src->size + 1);
 }
 
-void string_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max /* - includes null terminator */) {
-    assert(idx_last >= idx_first && idx_last <= src->size);
+void string_write_nt(const string_t* src, char* buf) {
+    memcpy(buf, src->ptr, src->size);
+}
 
-    size_t len = idx_last - idx_first + 1ull;
+void string_write_n(const string_t* src, char* buf, size_t max) {
+    size_t len;
+    if (src->size >= max) len = max;
+    else len = src->size;
+    memcpy(buf, src->ptr, len);
+    buf[len] = '\0';
+}
+
+void string_write_n_nt(const string_t* src, char* buf, size_t max) {
+    size_t len;
+    if (src->size >= max) len = max;
+    else len = src->size;
+    memcpy(buf, src->ptr, len);
+}
+
+void string_substr_write(const string_t* src, char* buf, size_t idx_first, size_t idx_last) {
+    assert(idx_last >= idx_first && idx_last <= src->size && "string_substr_write(): idxes out of range");
+    const size_t len = idx_last - idx_first;
+    memcpy(buf, src->ptr + idx_first, len);
+    buf[len] = '\0';
+}
+
+void string_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
+    assert(idx_last >= idx_first && idx_last <= src->size);
+    size_t len = idx_last - idx_first;
     if (len > max) len = max;
-    memcpy(buf, src->ptr + idx_first, len - 1);
-    buf[len - 1] = '\0';
+    memcpy(buf, src->ptr + idx_first, len);
+    buf[len] = '\0';
 }
 
 void string_app(string_t* dest, const string_t* src) {
-    char* const dest_last = dest->ptr + dest->size;
     _string_detail_increase_cap(dest, dest->size + src->size + 1);
+    char* const dest_last = dest->ptr + dest->size;
     memcpy(dest_last, src->ptr, src->size + 1);
     dest->size += src->size;
 }
 
 void string_app_chars(string_t* dest, const char* src) {
     const size_t src_len = strlen(src);
-    char* const dest_last = dest->ptr + dest->size;
     _string_detail_increase_cap(dest, src_len + dest->size + 1);
+    char* const dest_last = dest->ptr + dest->size;
     memcpy(dest_last, src, src_len + 1);
     dest->size += src_len;
 }
 
 void string_clear(string_t* string) {
     memset(string->ptr, '\0', string->size);
+}
+
+void string_reset(string_t* string) {
+    free(string->ptr);
+    string->ptr = NULL;
+    string->cap = 0;
+    string->size = 0;
 }

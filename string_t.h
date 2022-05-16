@@ -12,9 +12,9 @@
     #define STRING_MULTIPLIER 2ull
 #endif
 
-#if defined(__GNUC__)
+#if defined(__GNUC__) && (__GNUC__ >= 4)
     #define _STRING_NODISCARD __attribute__((warn_unused_result))
-#elif defined(_MSC_VER)
+#elif defined(_MSC_VER) && (_MSC_VER >= 1700)
     #define _STRING_NODISCARD _Check_return_
 #else
     #define _STRING_NODISCARD
@@ -40,10 +40,15 @@ size_t string_rfind_nth(const string_t* string, char c, size_t n);
 void string_set_cap(string_t* string, size_t new_cap);
 void string_add_cap(string_t* string, size_t n);
 _STRING_NODISCARD string_t string_substr(const string_t* src, size_t idx_first, size_t idx_last);
+void string_write(const string_t* src, char* buf);
+void string_write_nt(const string_t* src, char* buf);
+void string_write_n(const string_t* src, char* buf, size_t max);
+void string_write_n_nt(const string_t* src, char* buf, size_t max);
 void string_substr_write(const string_t* src, char* buf, size_t idx_first, size_t idx_last);
 void string_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max);
 void string_app(string_t* dest, const string_t* src);
 void string_app_chars(string_t* dest, const char* src);
 void string_clear(string_t* string);
+void string_reset(string_t* string);
 
 #endif
