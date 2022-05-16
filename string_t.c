@@ -252,15 +252,16 @@ int str_fgetln(string_t* dest, FILE* fp) {
 
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max) {
     size_t len;
-    if (max + 1 > dest->cap) {
-        _string_detail_increase_cap(dest, max + 1);
+    ++max;
+    if (max > dest->cap) {
+        _string_detail_increase_cap(dest, max);
         len = dest->cap;
     } else
-        len = max + 1;
+        len = max;
 
     return fgets(dest->ptr, len, fp) != NULL;
 }
 
-int str_fwrite(string_t* src, FILE* fp) {
-    fputs(src->ptr, fp);
+int str_fwrite(const string_t* src, FILE* fp) {
+    return fputs(src->ptr, fp);
 }
