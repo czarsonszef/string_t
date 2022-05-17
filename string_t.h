@@ -66,16 +66,17 @@ int str_fgetln(string_t* dest, FILE* fp);
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
 int str_fwrite(const string_t* src, FILE* fp);
 
-void _string_detail_set_cchp(string_t* string, const char* str);
-void _string_detail_set_cstp(string_t* dest, const string_t* src);
-int _string_detail_same_cchp(const string_t* string, const char* str);
-int _string_detail_same_cstp(const string_t* first, const string_t* second);
-void _string_detail_app_cchp(string_t* dest, const char* src);
-void _string_detail_app_cstp(string_t* dest, const string_t* src);
-int _string_detail_pre_cchp(const string_t* string, const char* pre);
-int _string_detail_pre_cstp(const string_t* string, const string_t* pre);
-int _string_detail_suf_cchp(const string_t* string, const char* suf);
-int _string_detail_suf_cstp(const string_t* string, const string_t* suf);
+void _string_detail_destructor(string_t*);
+void _string_detail_set_cchp(string_t*, const char*);
+void _string_detail_set_cstp(string_t*, const string_t*);
+int _string_detail_same_cchp(const string_t*, const char*);
+int _string_detail_same_cstp(const string_t*, const string_t*);
+void _string_detail_app_cchp(string_t*, const char*);
+void _string_detail_app_cstp(string_t*, const string_t*);
+int _string_detail_pre_cchp(const string_t*, const char*);
+int _string_detail_pre_cstp(const string_t*, const string_t*);
+int _string_detail_suf_cchp(const string_t*, const char*);
+int _string_detail_suf_cstp(const string_t*, const string_t*);
 
 #define str_set(dest, src) _Generic((src),      \
     char*: _string_detail_set_cchp,             \
@@ -91,8 +92,6 @@ int _string_detail_suf_cstp(const string_t* string, const string_t* suf);
     char*: _string_detail_app_cchp,             \
     string_t*: _string_detail_app_cstp          \
 )((dest), (src))
-
-void _string_detail_destructor(string_t*);
 
 #if defined(__GNUC__)
 #   if defined(__has_attribute)
