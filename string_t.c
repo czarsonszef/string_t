@@ -3,7 +3,7 @@
 static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
     assert(new_cap > string->cap && "string_t internal error -> _string_detail_increase_cap(): new cap smaller than the current cap");
 
-    if (string->cap == 0)
+    if (_STRING_EXPECT(string->cap == 0, 0))
         string->cap = 1;
 
     while (string->cap < new_cap)

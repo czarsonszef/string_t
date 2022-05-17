@@ -21,6 +21,12 @@
 #   define _STRING_NODISCARD
 #endif
 
+#if defined(__GNUC__) && (__GNUC__ >= 3)
+#   define _STRING_EXPECT(expr, c) __builtin_expect(!!(expr), c)
+#else
+#   define _STRING_EXPECT(expr, c) expr
+#endif
+
 typedef struct string_t {
     char* ptr;
     size_t size; /* always equal to strlen(ptr) */
