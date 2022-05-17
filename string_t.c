@@ -1,7 +1,7 @@
 #include "string_t.h"
 
 static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
-    assert(new_cap > string->cap);
+    assert(new_cap > string->cap && "string_t internal error -> _string_detail_increase_cap(): new cap smaller than the current cap");
 
     if (string->cap == 0)
         string->cap = 1;
@@ -73,7 +73,7 @@ void str_free(string_t* string) {
 }
 
 char* str_at(const string_t* string, size_t idx) {
-    assert(!(idx >= string->size) && "string_at(): idx out of range");
+    assert(!(idx >= string->size) && "str_at(): idx out of range");
     return &string->ptr[idx];
 }
 
@@ -111,7 +111,7 @@ size_t str_rfind(const string_t* string, char c) {
 }
 
 size_t str_find_nth(const string_t* string, char c, size_t n) {
-    assert(n > 0);
+    assert(n > 0 && "str_find_nth(): tried to find 0th occurence");
 
     size_t i = 0;
     for (; i < string->size; ++i)
@@ -125,7 +125,7 @@ size_t str_find_nth(const string_t* string, char c, size_t n) {
 }
 
 size_t str_rfind_nth(const string_t* string, char c, size_t n) {
-    assert(n > 0);
+    assert(n > 0 && "str_rfind_nth(): tried to find 0th occurence");
 
     size_t i = string->size - 1;
     for (; i >= 0; --i)
@@ -156,7 +156,7 @@ void str_add_cap(string_t* string, size_t n) {
 
 string_t str_substr(const string_t* src, size_t idx_first, size_t idx_last) {
     /* [first, last) */
-    assert(idx_last >= idx_first && idx_last <= src->size && "string_substre(): idxes out of range");
+    assert(idx_last >= idx_first && idx_last <= src->size && "str_substr(): idxes out of range");
 
     const size_t len = idx_last - idx_first + 1;
     string_t out = {
@@ -198,7 +198,7 @@ char* str_write_n_nt(const string_t* src, char* buf, size_t max) {
 }
 
 char* str_substr_write(const string_t* src, char* buf, size_t idx_first, size_t idx_last) {
-    assert(idx_last >= idx_first && idx_last <= src->size && "string_substr_write(): idxes out of range");
+    assert(idx_last >= idx_first && idx_last <= src->size && "str_substr_write(): index out of range");
     const size_t len = idx_last - idx_first;
     memcpy(buf, src->ptr + idx_first, len);
     buf[len] = '\0';
@@ -206,14 +206,14 @@ char* str_substr_write(const string_t* src, char* buf, size_t idx_first, size_t 
 }
 
 char* str_substr_write_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last) {
-    assert(idx_last >= idx_first && idx_last <= src->size && "string_substr_write(): idxes out of range");
+    assert(idx_last >= idx_first && idx_last <= src->size && "str_substr_write_nt(): index out of range");
     const size_t len = idx_last - idx_first;
     memcpy(buf, src->ptr + idx_first, len);
     return buf;
 }
 
 char* str_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
-    assert(idx_last >= idx_first && idx_last <= src->size);
+    assert(idx_last >= idx_first && idx_last <= src->size && "str_substr_write_n(): index out of range");
     size_t len = idx_last - idx_first;
     if (len > max) len = max;
     memcpy(buf, src->ptr + idx_first, len);
@@ -222,7 +222,7 @@ char* str_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_
 }
 
 char* str_substr_write_n_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
-    assert(idx_last >= idx_first && idx_last <= src->size);
+    assert(idx_last >= idx_first && idx_last <= src->size && "str_substr_write_n_nt(): index out of range");
     size_t len = idx_last - idx_first;
     if (len > max) len = max;
     memcpy(buf, src->ptr + idx_first, len);
