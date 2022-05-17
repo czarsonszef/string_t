@@ -10,15 +10,15 @@
 #define STRING_NPOS (size_t)-1
 
 #ifndef STRING_MULTIPLIER /* see _string_detail_increase_cap() */
-    #define STRING_MULTIPLIER 2ull
+#   define STRING_MULTIPLIER 2ull
 #endif
 
 #if defined(__GNUC__) && (__GNUC__ >= 4)
-    #define _STRING_NODISCARD __attribute__((warn_unused_result))
+#   define _STRING_NODISCARD __attribute__((warn_unused_result))
 #elif defined(_MSC_VER) && (_MSC_VER >= 1700)
-    #define _STRING_NODISCARD _Check_return_
+#   define _STRING_NODISCARD _Check_return_
 #else
-    #define _STRING_NODISCARD
+#   define _STRING_NODISCARD
 #endif
 
 typedef struct string_t {
@@ -66,6 +66,10 @@ int _string_detail_same_cchp(const string_t* string, const char* str);
 int _string_detail_same_cstp(const string_t* first, const string_t* second);
 void _string_detail_app_cchp(string_t* dest, const char* src);
 void _string_detail_app_cstp(string_t* dest, const string_t* src);
+int _string_detail_pre_cchp(const string_t* string, const char* pre);
+int _string_detail_pre_cstp(const string_t* string, const string_t* pre);
+int _string_detail_suf_cchp(const string_t* string, const char* suf);
+int _string_detail_suf_cstp(const string_t* string, const string_t* suf);
 
 #define str_set(dest, src) _Generic((src),      \
     char*: _string_detail_set_cchp,             \

@@ -1,19 +1,21 @@
 #include "string_t.h"
 
 static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
+    assert(new_cap > string->cap);
+
     if (string->cap == 0)
         string->cap = 1;
 
     while (string->cap < new_cap)
         string->cap *= STRING_MULTIPLIER;
 
-    string->ptr = realloc(string->ptr, sizeof(char) * string->cap);
+    string->ptr = realloc(string->ptr, string->cap);
 }
 
 string_t str_make(const char* str) {
     const size_t str_len = strlen(str);
     string_t out = {
-        .ptr = malloc(sizeof(char) * (str_len + 1)),
+        .ptr = malloc(str_len + 1),
         .size = str_len,
         .cap = str_len + 1
     };
@@ -24,7 +26,7 @@ string_t str_make(const char* str) {
 
 string_t str_make_n(const char* str, size_t size) {
     string_t out = {
-        .ptr = malloc(sizeof(char) * (size + 1)),
+        .ptr = malloc(size + 1),
         .size = size,
         .cap = size + 1
     };
@@ -36,7 +38,7 @@ string_t str_make_n(const char* str, size_t size) {
 
 string_t str_copy(const string_t* string) {
     string_t out = {
-        .ptr = malloc(sizeof(char) * (string->size + 1)),
+        .ptr = malloc(string->size + 1),
         .size = string->size,
         .cap = string->size + 1
     };
@@ -56,7 +58,6 @@ void _string_detail_set_cchp(string_t* string, const char* str) {
 void _string_detail_set_cstp(string_t* dest, const string_t* src) {
     if (src->size + 1 > dest->cap)
         _string_detail_increase_cap(dest, src->size + 1);
-
     memcpy(dest->ptr, src->ptr, src->size + 1);
     dest->size = src->size;
 }
@@ -85,6 +86,7 @@ int _string_detail_same_cstp(const string_t* first, const string_t* second) {
 }
 
 char str_pop(string_t* string) {
+    assert(string->size > 0 && "str_pop(): tried to pop a char from an empty string");
     const char out = string->ptr[--string->size];
     string->ptr[string->size] = '\0';
     return out;
@@ -139,11 +141,11 @@ size_t str_rfind_nth(const string_t* string, char c, size_t n) {
 void str_set_cap(string_t* string, size_t new_cap) {
     if (new_cap > string->cap) {
         string->cap = new_cap;
-        string->ptr = realloc(string->ptr, sizeof(char) * new_cap);
+        string->ptr = realloc(string->ptr, new_cap);
     } else if (new_cap < string->cap) {
         string->cap = new_cap;
         string->size = new_cap - 1;
-        string->ptr = realloc(string->ptr, sizeof(char) * new_cap);
+        string->ptr = realloc(string->ptr, new_cap);
         string->ptr[string->size] = '\0';
     }
 }
@@ -158,7 +160,7 @@ string_t str_substr(const string_t* src, size_t idx_first, size_t idx_last) {
 
     const size_t len = idx_last - idx_first + 1;
     string_t out = {
-        .ptr = malloc(sizeof(char) * len),
+        .ptr = malloc(len),
         .size = len - 1,
         .cap = len
     };
@@ -245,7 +247,7 @@ void str_clear(string_t* string) {
 }
 
 void str_reset(string_t* string) {
-    free(string->ptr);
+    str_free(string);
     *string = STRING_EMPTY;
 }
 
@@ -284,6 +286,18 @@ int str_fwrite(const string_t* src, FILE* fp) {
     return fputs(src->ptr, fp);
 }
 
-int str_suf(const string_t* src, const string_t* suf) {
+int _string_detail_pre_cchp(const string_t* string, const char* pre) {
+
+}
+
+int _string_detail_pre_cstp(const string_t* string, const string_t* pre) {
+
+}
+
+int _string_detail_suf_cchp(const string_t* string, const char* suf) {
+
+}
+
+int _string_detail_suf_cstp(const string_t* string, const string_t* suf) {
 
 }
