@@ -92,4 +92,14 @@ int _string_detail_suf_cstp(const string_t* string, const string_t* suf);
     string_t*: _string_detail_app_cstp          \
 )((dest), (src))
 
+void _string_detail_destructor(string_t*);
+
+#if defined(__GNUC__)
+#   if defined(__has_attribute)
+#       if __has_attribute(__cleanup__)
+#           define auto_string_t __attribute__((__cleanup__(_string_detail_destructor))) string_t
+#       endif
+#   endif
+#endif
+
 #endif

@@ -73,7 +73,7 @@ void str_free(string_t* string) {
 }
 
 char* str_at(const string_t* string, size_t idx) {
-    assert(!(idx >= string->size) && "str_at(): idx out of range");
+    assert(!(idx >= string->size) && "str_at(): index out of range");
     return &string->ptr[idx];
 }
 
@@ -156,7 +156,7 @@ void str_add_cap(string_t* string, size_t n) {
 
 string_t str_substr(const string_t* src, size_t idx_first, size_t idx_last) {
     /* [first, last) */
-    assert(idx_last >= idx_first && idx_last <= src->size && "str_substr(): idxes out of range");
+    assert(idx_last >= idx_first && idx_last <= src->size && "str_substr(): index out of range");
 
     const size_t len = idx_last - idx_first + 1;
     string_t out = {
@@ -300,4 +300,8 @@ int _string_detail_suf_cchp(const string_t* string, const char* suf) {
 
 int _string_detail_suf_cstp(const string_t* string, const string_t* suf) {
 
+}
+
+void _string_detail_destructor(string_t* string) {
+    if (string->ptr != NULL) free(string->ptr);
 }
