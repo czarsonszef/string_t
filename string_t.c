@@ -175,8 +175,10 @@ char* str_write_nt(const string_t* src, char* buf) {
 
 char* str_write_n(const string_t* src, char* buf, size_t max) {
     size_t len;
+
     if (src->size >= max) len = max;
     else len = src->size;
+
     memcpy(buf, src->ptr, len);
     buf[len] = '\0';
     return buf;
@@ -184,8 +186,10 @@ char* str_write_n(const string_t* src, char* buf, size_t max) {
 
 char* str_write_n_nt(const string_t* src, char* buf, size_t max) {
     size_t len;
+
     if (src->size >= max) len = max;
     else len = src->size;
+
     memcpy(buf, src->ptr, len);
     return buf;
 }
@@ -207,8 +211,10 @@ char* str_substr_write_nt(const string_t* src, char* buf, size_t idx_first, size
 
 char* str_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
     assert(idx_last >= idx_first && idx_last <= src->size && "str_substr_write_n(): index out of range");
+
     size_t len = idx_last - idx_first;
     if (len > max) len = max;
+
     memcpy(buf, src->ptr + idx_first, len);
     buf[len] = '\0';
     return buf;
@@ -216,8 +222,10 @@ char* str_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_
 
 char* str_substr_write_n_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max) {
     assert(idx_last >= idx_first && idx_last <= src->size && "str_substr_write_n_nt(): index out of range");
+
     size_t len = idx_last - idx_first;
     if (len > max) len = max;
+
     memcpy(buf, src->ptr + idx_first, len);
     return buf;
 }
@@ -289,6 +297,7 @@ void _string_detail_set_cchp(string_t* string, const char* str) {
     const size_t str_len = strlen(str);
     if (str_len + 1 > string->cap)
         _string_detail_increase_cap(string, str_len + 1);
+
     memcpy(string->ptr, str, str_len + 1);
     string->size = str_len;
 }
@@ -296,6 +305,7 @@ void _string_detail_set_cchp(string_t* string, const char* str) {
 void _string_detail_set_cstp(string_t* dest, const string_t* src) {
     if (src->size + 1 > dest->cap)
         _string_detail_increase_cap(dest, src->size + 1);
+
     memcpy(dest->ptr, src->ptr, src->size + 1);
     dest->size = src->size;
 }
@@ -304,6 +314,7 @@ void _string_detail_app_cchp(string_t* dest, const char* src) {
     const size_t src_len = strlen(src);
     if (dest->cap < src_len + dest->size + 1)
         _string_detail_increase_cap(dest, src_len + dest->size + 1);
+
     memcpy(dest->ptr + dest->size, src, src_len + 1);
     dest->size += src_len;
 }
@@ -311,6 +322,7 @@ void _string_detail_app_cchp(string_t* dest, const char* src) {
 void _string_detail_app_cstp(string_t* dest, const string_t* src) {
     if (dest->cap < src->size + dest->size + 1)
         _string_detail_increase_cap(dest, dest->size + src->size + 1);
+
     memcpy(dest->ptr + dest->size, src->ptr, src->size + 1);
     dest->size += src->size;
 }
