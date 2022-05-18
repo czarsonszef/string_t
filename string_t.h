@@ -64,7 +64,7 @@ void str_push(string_t* string, char c);
 char str_pop(string_t* string);
 void str_set_cap(string_t* string, size_t new_cap);
 void str_reset(string_t* string);
-const char* str_end(const string_t* string) _STRING_RETURNS_NONNULL;
+const char* str_end(const string_t* string);
 string_t str_substr(const string_t* src, size_t idx_first, size_t idx_last) _STRING_NODISCARD;
 char* str_write(const string_t* src, char* buf);
 char* str_write_nt(const string_t* src, char* buf);
