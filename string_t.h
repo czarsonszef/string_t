@@ -13,7 +13,7 @@ typedef struct string_t {
     size_t cap;
 } string_t;
 
-#define STRING_EMPTY (string_t){ NULL, 0ull, 0ull };
+#define STRING_EMPTY (string_t){ NULL, 0ull, 0ull }
 #define STRING_NPOS (size_t)-1
 
 #ifndef STRING_MULTIPLIER /* see _string_detail_increase_cap() */
