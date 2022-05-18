@@ -45,15 +45,13 @@ _STRING_NODISCARD string_t str_make_n_c(const char* str, size_t size, size_t cap
 _STRING_NODISCARD string_t str_make_empty(size_t cap);
 _STRING_NODISCARD string_t str_copy(const string_t* string);
 void str_exchg(string_t* first, string_t* second);
-void str_free(string_t* string);
+_STRING_NODISCARD string_t str_move(string_t* string);
 char* str_at(const string_t* string, size_t idx);
+void str_push(string_t* string, char c);
 char str_pop(string_t* string);
-size_t str_find(const string_t* string, char c);
-size_t str_rfind(const string_t* string, char c);
-size_t str_find_nth(const string_t* string, char c, size_t n);
-size_t str_rfind_nth(const string_t* string, char c, size_t n);
 void str_set_cap(string_t* string, size_t new_cap);
-void str_add_cap(string_t* string, size_t n);
+void str_reset(string_t* string);
+const char* str_end(const string_t* string);
 _STRING_NODISCARD string_t str_substr(const string_t* src, size_t idx_first, size_t idx_last);
 char* str_write(const string_t* src, char* buf);
 char* str_write_nt(const string_t* src, char* buf);
@@ -63,15 +61,11 @@ char* str_substr_write(const string_t* src, char* buf, size_t idx_first, size_t 
 char* str_substr_write_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last);
 char* str_substr_write_n(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max);
 char* str_substr_write_n_nt(const string_t* src, char* buf, size_t idx_first, size_t idx_last, size_t max);
-void str_clear(string_t* string);
-void str_reset(string_t* string);
-const char* str_end(const string_t* string);
-int str_is_empty(const string_t* string);
-_STRING_NODISCARD string_t str_move(string_t* string);
-int str_fgetln(string_t* dest, FILE* fp);
+size_t str_find(const string_t* string, char c);
+size_t str_rfind(const string_t* string, char c);
+size_t str_find_nth(const string_t* string, char c, size_t n);
+size_t str_rfind_nth(const string_t* string, char c, size_t n);
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
-int str_fwrite(const string_t* src, FILE* fp);
-void str_push(string_t* string, char c);
 
 void _string_detail_destructor(string_t*);
 void _string_detail_set_cchp(string_t*, const char*);
@@ -87,13 +81,26 @@ int _string_detail_pre_cstp(const string_t*, const string_t*);
 int _string_detail_suf_cchp(const string_t*, const char*);
 int _string_detail_suf_cstp(const string_t*, const string_t*);
 
+#if defined(__GNUC__) && defined(__has_attribute)
+#   if __has_attribute(__cleanup__)
+#       define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
+#   endif
+#endif
+
+#define str_free(string) free(string.ptr)
+#define str_add_cap(pstring, n) str_set_cap(pstring, n + pstring->cap)
+#define str_clear(pstring) memset(pstring->ptr, '\0', pstring->size)
+#define str_is_empty(string) (string.size == 0)
+#define str_fgetln(string, file) (fgets(string.ptr, string.cap, file) != NULL)
+#define str_fwrite(string, file) (fputs(string.ptr, file))
+
 #define str_set(pdest, src) _Generic((src),                     \
     char*: _string_detail_set_cchp,                             \
     string_t*: _string_detail_set_cstp                          \
 )((pdest), (src))
 
 #define str_same(pstring, second) _Generic((second),            \
-    char*: _string_detail_same_cchp,                            \
+    char*: _string_detail_same_cchp ,                           \
     string_t*: _string_detail_same_cstp                         \
 )((pstring), (second))
 
@@ -116,12 +123,5 @@ int _string_detail_suf_cstp(const string_t*, const string_t*);
     char*: _string_detail_suf_cchp,                             \
     string_t*: _string_detail_suf_cstp                          \
 )((pstring), (suf))
-
-
-#if defined(__GNUC__) && defined(__has_attribute)
-#   if __has_attribute(__cleanup__)
-#       define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
-#   endif
-#endif
 
 #endif
