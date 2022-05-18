@@ -6,8 +6,9 @@ static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
     if (_STRING_UNLIKELY(string->cap == 0))
         string->cap = 1;
 
-    while (string->cap < new_cap)
+    do /* if this function is called it means we want to enter this loop at least once - initial check can be skipped */
         string->cap *= STRING_MULTIPLIER;
+    while (string->cap < new_cap);
 
     string->ptr = realloc(string->ptr, string->cap);
 }
@@ -78,7 +79,7 @@ string_t str_make_empty(size_t cap) {
         .cap = cap
     };
 
-    out.ptr[0] = '\0';
+    *out.ptr = '\0';
     return out;
 }
 
