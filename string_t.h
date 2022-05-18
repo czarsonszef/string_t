@@ -33,7 +33,7 @@ typedef struct string_t {
     size_t cap;
 } string_t;
 
-#define STRING_EMPTY (string_t){ NULL, 0, 0 };
+#define STRING_EMPTY (string_t){ NULL, 0ull, 0ull };
 
 _STRING_NODISCARD string_t str_make(const char* str);
 _STRING_NODISCARD string_t str_make_n(const char* str, size_t size);
@@ -65,12 +65,15 @@ _STRING_NODISCARD string_t str_move(string_t* string);
 int str_fgetln(string_t* dest, FILE* fp);
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
 int str_fwrite(const string_t* src, FILE* fp);
+void str_push(string_t* string, char c);
 
 void _string_detail_destructor(string_t*);
 void _string_detail_set_cchp(string_t*, const char*);
 void _string_detail_set_cstp(string_t*, const string_t*);
 int _string_detail_same_cchp(const string_t*, const char*);
 int _string_detail_same_cstp(const string_t*, const string_t*);
+int _string_detail_same_n_cchp(const string_t* string, const char* str, size_t max);
+int _string_detail_same_n_cstp(const string_t* first, const string_t* second, size_t max);
 void _string_detail_app_cchp(string_t*, const char*);
 void _string_detail_app_cstp(string_t*, const string_t*);
 int _string_detail_pre_cchp(const string_t*, const char*);
@@ -78,25 +81,25 @@ int _string_detail_pre_cstp(const string_t*, const string_t*);
 int _string_detail_suf_cchp(const string_t*, const char*);
 int _string_detail_suf_cstp(const string_t*, const string_t*);
 
-#define str_set(dest, src) _Generic((src),      \
-    char*: _string_detail_set_cchp,             \
-    string_t*: _string_detail_set_cstp          \
-)((dest), (src))
+#define str_set(pdest, src) _Generic((src),         \
+    char*: _string_detail_set_cchp,                 \
+    string_t*: _string_detail_set_cstp              \
+)((pdest), (src))
 
-#define str_same(string, str) _Generic((str),   \
-    char*: _string_detail_same_cchp,            \
-    string_t*: _string_detail_same_cstp         \
-)((string), (str))
+#define str_same(pstring, str) _Generic((str),      \
+    char*: _string_detail_same_cchp,                \
+    string_t*: _string_detail_same_cstp             \
+)((pstring), (str)) 
 
-#define str_app(dest, src) _Generic((src),      \
-    char*: _string_detail_app_cchp,             \
-    string_t*: _string_detail_app_cstp          \
-)((dest), (src))
+#define str_app(pdest, src) _Generic((src),         \
+    char*: _string_detail_app_cchp,                 \
+    string_t*: _string_detail_app_cstp              \
+)((pdest), (src))
 
 #if defined(__GNUC__)
 #   if defined(__has_attribute)
 #       if __has_attribute(__cleanup__)
-#           define auto_string_t __attribute__((__cleanup__(_string_detail_destructor))) string_t
+#           define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
 #       endif
 #   endif
 #endif

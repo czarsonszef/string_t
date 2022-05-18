@@ -85,6 +85,14 @@ int _string_detail_same_cstp(const string_t* first, const string_t* second) {
     return !strcmp(first->ptr, second->ptr);
 }
 
+int _string_detail_same_n_cchp(const string_t* string, const char* str, size_t max) {
+    return !strncmp(string->ptr, str, max);
+}
+
+int _string_detail_same_n_cstp(const string_t* first, const string_t* second, size_t max) {
+    return !strncmp(first->ptr, second->ptr, max);
+}
+
 char str_pop(string_t* string) {
     assert(string->size > 0 && "str_pop(): tried to pop a char from an empty string");
     const char out = string->ptr[--string->size];
@@ -304,4 +312,12 @@ int _string_detail_suf_cstp(const string_t* string, const string_t* suf) {
 
 void _string_detail_destructor(string_t* string) {
     if (string->ptr != NULL) free(string->ptr);
+}
+
+void str_push(string_t* string, char c) {
+    if (string->cap < string->size + 2)
+        _string_detail_increase_cap(string, string->size + 2);
+
+    string->ptr[string->size++] = c;
+    string->ptr[string->size] = '\0';
 }
