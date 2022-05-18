@@ -309,7 +309,7 @@ void str_reset(string_t* string) {
 }
 
 const char* str_end(const string_t* string) {
-    return string->ptr + string->size + 1;
+    return string->ptr + string->size;
 }
 
 int str_is_empty(const string_t* string) {
@@ -344,19 +344,22 @@ int str_fwrite(const string_t* src, FILE* fp) {
 }
 
 int _string_detail_pre_cchp(const string_t* string, const char* pre) {
-
+    return !strncmp(string->ptr, pre, strlen(pre));
 }
 
 int _string_detail_pre_cstp(const string_t* string, const string_t* pre) {
-
+    return !strncmp(string->ptr, pre->ptr, pre->size);
 }
 
 int _string_detail_suf_cchp(const string_t* string, const char* suf) {
-
+    const size_t suf_len = strlen(suf);
+    if (_STRING_UNLIKELY(suf_len > string->size)) return 0;
+    return !strncmp(string->ptr + string->size - suf_len, suf, suf_len);
 }
 
 int _string_detail_suf_cstp(const string_t* string, const string_t* suf) {
-
+    if (_STRING_UNLIKELY(suf->size > string->size)) return 0;
+    return !strncmp(string->ptr + string->size - suf->size, suf->ptr, suf->size);
 }
 
 void _string_detail_destructor(string_t* string) {

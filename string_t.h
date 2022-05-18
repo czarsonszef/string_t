@@ -87,26 +87,40 @@ int _string_detail_pre_cstp(const string_t*, const string_t*);
 int _string_detail_suf_cchp(const string_t*, const char*);
 int _string_detail_suf_cstp(const string_t*, const string_t*);
 
-#define str_set(pdest, src) _Generic((src),         \
-    char*: _string_detail_set_cchp,                 \
-    string_t*: _string_detail_set_cstp              \
+#define str_set(pdest, src) _Generic((src),                     \
+    char*: _string_detail_set_cchp,                             \
+    string_t*: _string_detail_set_cstp                          \
 )((pdest), (src))
 
-#define str_same(pstring, str) _Generic((str),      \
-    char*: _string_detail_same_cchp,                \
-    string_t*: _string_detail_same_cstp             \
-)((pstring), (str)) 
+#define str_same(pstring, second) _Generic((second),            \
+    char*: _string_detail_same_cchp,                            \
+    string_t*: _string_detail_same_cstp                         \
+)((pstring), (second))
 
-#define str_app(pdest, src) _Generic((src),         \
-    char*: _string_detail_app_cchp,                 \
-    string_t*: _string_detail_app_cstp              \
+#define str_same_n(pstring, second, max) _Generic((second),     \
+    char*: _string_detail_same_n_cchp,                          \
+    string_t*: _string_detail_same_n_cstp                       \
+)((pstring), (second), (max))
+
+#define str_app(pdest, src) _Generic((src),                     \
+    char*: _string_detail_app_cchp,                             \
+    string_t*: _string_detail_app_cstp                          \
 )((pdest), (src))
 
-#if defined(__GNUC__)
-#   if defined(__has_attribute)
-#       if __has_attribute(__cleanup__)
-#           define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
-#       endif
+#define str_pre(pstring, pre) _Generic((pre),                   \
+    char*: _string_detail_pre_cchp,                             \
+    string_t*: _string_detail_pre_cstp                          \
+)((pstring), (pre))
+
+#define str_suf(pstring, suf) _Generic((suf),                   \
+    char*: _string_detail_suf_cchp,                             \
+    string_t*: _string_detail_suf_cstp                          \
+)((pstring), (suf))
+
+
+#if defined(__GNUC__) && defined(__has_attribute)
+#   if __has_attribute(__cleanup__)
+#       define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
 #   endif
 #endif
 
