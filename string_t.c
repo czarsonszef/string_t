@@ -36,6 +36,14 @@ string_t str_make_n(const char* str, size_t size) {
     return out;
 }
 
+string_t str_make_empty(size_t cap) {
+    return (string_t) {
+        .ptr = malloc(cap),
+        .size = 0,
+        .cap = cap
+    };
+}
+
 string_t str_copy(const string_t* string) {
     string_t out = {
         .ptr = malloc(string->size + 1),

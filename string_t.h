@@ -37,6 +37,7 @@ typedef struct string_t {
 
 _STRING_NODISCARD string_t str_make(const char* str);
 _STRING_NODISCARD string_t str_make_n(const char* str, size_t size);
+_STRING_NODISCARD string_t str_make_empty(size_t cap);
 _STRING_NODISCARD string_t str_copy(const string_t* string);
 void str_exchg(string_t* first, string_t* second);
 void str_free(string_t* string);
