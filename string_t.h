@@ -7,6 +7,13 @@
 #include <assert.h>
 #include <stdio.h>
 
+typedef struct string_t {
+    char* ptr;
+    size_t size; /* always equal to strlen(ptr) */
+    size_t cap;
+} string_t;
+
+#define STRING_EMPTY (string_t){ NULL, 0ull, 0ull };
 #define STRING_NPOS (size_t)-1
 
 #ifndef STRING_MULTIPLIER /* see _string_detail_increase_cap() */
@@ -30,29 +37,35 @@
 #define _STRING_LIKELY(expr) _STRING_EXPECT(expr, 1)
 #define _STRING_UNLIKELY(expr) _STRING_EXPECT(expr, 0)
 
-typedef struct string_t {
-    char* ptr;
-    size_t size; /* always equal to strlen(ptr) */
-    size_t cap;
-} string_t;
+void _string_detail_destructor(string_t*);
+#if defined(__GNUC__) && defined(__has_attribute)
+#   if __has_attribute(__cleanup__)
+#       define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
+#   endif
+#   if __has_attribute(returns_nonnull)
+#       define _STRING_RETURNS_NONNULL __attribute__((returns_nonnull))
+#   endif
+#endif
 
-#define STRING_EMPTY (string_t){ NULL, 0ull, 0ull };
+#if !defined(_STRING_RETURNS_NONNULL)
+#   define _STRING_RETURNS_NONNULL
+#endif
 
-_STRING_NODISCARD string_t str_make(const char* str);
-_STRING_NODISCARD string_t str_make_c(const char* str, size_t cap);
-_STRING_NODISCARD string_t str_make_n(const char* str, size_t size);
-_STRING_NODISCARD string_t str_make_n_c(const char* str, size_t size, size_t cap);
-_STRING_NODISCARD string_t str_make_empty(size_t cap);
-_STRING_NODISCARD string_t str_copy(const string_t* string);
+string_t str_make(const char* str) _STRING_NODISCARD;
+string_t str_make_c(const char* str, size_t cap) _STRING_NODISCARD;
+string_t str_make_n(const char* str, size_t size) _STRING_NODISCARD;
+string_t str_make_n_c(const char* str, size_t size, size_t cap) _STRING_NODISCARD;
+string_t str_make_empty(size_t cap) _STRING_NODISCARD;
+string_t str_copy(const string_t* string) _STRING_NODISCARD;
 void str_exchg(string_t* first, string_t* second);
-_STRING_NODISCARD string_t str_move(string_t* string);
-char* str_at(const string_t* string, size_t idx);
+string_t str_move(string_t* string) _STRING_NODISCARD;
+char* str_at(const string_t* string, size_t idx) _STRING_RETURNS_NONNULL;
 void str_push(string_t* string, char c);
 char str_pop(string_t* string);
 void str_set_cap(string_t* string, size_t new_cap);
 void str_reset(string_t* string);
-const char* str_end(const string_t* string);
-_STRING_NODISCARD string_t str_substr(const string_t* src, size_t idx_first, size_t idx_last);
+const char* str_end(const string_t* string) _STRING_RETURNS_NONNULL;
+string_t str_substr(const string_t* src, size_t idx_first, size_t idx_last) _STRING_NODISCARD;
 char* str_write(const string_t* src, char* buf);
 char* str_write_nt(const string_t* src, char* buf);
 char* str_write_n(const string_t* src, char* buf, size_t max);
@@ -67,7 +80,6 @@ size_t str_find_nth(const string_t* string, char c, size_t n);
 size_t str_rfind_nth(const string_t* string, char c, size_t n);
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
 
-void _string_detail_destructor(string_t*);
 void _string_detail_set_cchp(string_t*, const char*);
 void _string_detail_set_cstp(string_t*, const string_t*);
 int _string_detail_same_cchp(const string_t*, const char*);
@@ -87,12 +99,6 @@ int _string_detail_suf_cstp(const string_t*, const string_t*);
 #define str_is_empty(string) (string.size == 0)
 #define str_fgetln(string, file) (fgets(string.ptr, string.cap, file) != NULL)
 #define str_fwrite(string, file) fputs(string.ptr, file)
-
-#if defined(__GNUC__) && defined(__has_attribute)
-#   if __has_attribute(__cleanup__)
-#       define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
-#   endif
-#endif
 
 #define str_set(pdest, src) _Generic((src),                     \
     char*: _string_detail_set_cchp,                             \
