@@ -268,17 +268,6 @@ size_t str_rfind_nth(const string_t* string, char c, size_t n) {
     return STRING_NPOS;
 }
 
-int str_fgetln_n(string_t* dest, FILE* fp, size_t max) {
-    ++max;
-
-    if (max > dest->cap) {
-        _string_detail_increase_cap(dest, max);
-        max = dest->cap;
-    }
-
-    return fgets(dest->ptr, max, fp) != NULL;
-}
-
 void _string_detail_destructor(string_t* string) {
     if (string->ptr != NULL) free(string->ptr);
 }
