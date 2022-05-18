@@ -3,7 +3,7 @@
 static void _string_detail_increase_cap(string_t* string, size_t new_cap) {
     assert(new_cap > string->cap && "string_t internal error -> _string_detail_increase_cap(): new cap smaller than the current cap");
 
-    if (_STRING_EXPECT(string->cap == 0, 0))
+    if (_STRING_UNLIKELY(string->cap == 0))
         string->cap = 1;
 
     while (string->cap < new_cap)
@@ -24,7 +24,25 @@ string_t str_make(const char* str) {
     return out;
 }
 
+string_t str_make_c(const char* str, size_t cap) {
+    const size_t str_len = strlen(str);
+
+    if (_STRING_UNLIKELY(cap < str_len + 1))
+        cap = str_len + 1;
+
+    string_t out = {
+        .ptr = malloc(cap),
+        .size = str_len,
+        .cap = cap
+    };
+
+    memcpy(out.ptr, str, str_len + 1);
+    return out;
+}
+
 string_t str_make_n(const char* str, size_t size) {
+    assert(size <= strlen(str));
+
     string_t out = {
         .ptr = malloc(size + 1),
         .size = size,
@@ -36,12 +54,32 @@ string_t str_make_n(const char* str, size_t size) {
     return out;
 }
 
+string_t str_make_n_c(const char* str, size_t size, size_t cap) {
+    assert(size <= strlen(str));
+
+    if (_STRING_UNLIKELY(cap < size + 1))
+        cap = size + 1;
+
+    string_t out = {
+        .ptr = malloc(cap),
+        .size = size,
+        .cap = cap
+    };
+
+    memcpy(out.ptr, str, size);
+    out.ptr[size] = '\0';
+    return out;
+}
+
 string_t str_make_empty(size_t cap) {
-    return (string_t) {
+    string_t out = {
         .ptr = malloc(cap),
         .size = 0,
         .cap = cap
     };
+
+    out.ptr[0] = '\0';
+    return out;
 }
 
 string_t str_copy(const string_t* string) {
@@ -247,13 +285,15 @@ char* str_substr_write_n_nt(const string_t* src, char* buf, size_t idx_first, si
 
 void _string_detail_app_cchp(string_t* dest, const char* src) {
     const size_t src_len = strlen(src);
-    _string_detail_increase_cap(dest, src_len + dest->size + 1);
+    if (dest->cap < src_len + dest->size + 1)
+        _string_detail_increase_cap(dest, src_len + dest->size + 1);
     memcpy(dest->ptr + dest->size, src, src_len + 1);
     dest->size += src_len;
 }
 
 void _string_detail_app_cstp(string_t* dest, const string_t* src) {
-    _string_detail_increase_cap(dest, dest->size + src->size + 1);
+    if (dest->cap < src->size + dest->size + 1)
+        _string_detail_increase_cap(dest, dest->size + src->size + 1);
     memcpy(dest->ptr + dest->size, src->ptr, src->size + 1);
     dest->size += src->size;
 }

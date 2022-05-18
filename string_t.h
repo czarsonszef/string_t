@@ -27,6 +27,9 @@
 #   define _STRING_EXPECT(expr, c) expr
 #endif
 
+#define _STRING_LIKELY(expr) _STRING_EXPECT(expr, 1)
+#define _STRING_UNLIKELY(expr) _STRING_EXPECT(expr, 0)
+
 typedef struct string_t {
     char* ptr;
     size_t size; /* always equal to strlen(ptr) */
@@ -36,7 +39,9 @@ typedef struct string_t {
 #define STRING_EMPTY (string_t){ NULL, 0ull, 0ull };
 
 _STRING_NODISCARD string_t str_make(const char* str);
+_STRING_NODISCARD string_t str_make_c(const char* str, size_t cap);
 _STRING_NODISCARD string_t str_make_n(const char* str, size_t size);
+_STRING_NODISCARD string_t str_make_n_c(const char* str, size_t size, size_t cap);
 _STRING_NODISCARD string_t str_make_empty(size_t cap);
 _STRING_NODISCARD string_t str_copy(const string_t* string);
 void str_exchg(string_t* first, string_t* second);
