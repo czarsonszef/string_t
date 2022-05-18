@@ -174,23 +174,15 @@ char* str_write_nt(const string_t* src, char* buf) {
 }
 
 char* str_write_n(const string_t* src, char* buf, size_t max) {
-    size_t len;
-
-    if (src->size >= max) len = max;
-    else len = src->size;
-
-    memcpy(buf, src->ptr, len);
-    buf[len] = '\0';
+    if (src->size < max) max = src->size;
+    memcpy(buf, src->ptr, max - 1);
+    buf[max - 1] = '\0';
     return buf;
 }
 
 char* str_write_n_nt(const string_t* src, char* buf, size_t max) {
-    size_t len;
-
-    if (src->size >= max) len = max;
-    else len = src->size;
-
-    memcpy(buf, src->ptr, len);
+    if (src->size < max) max = src->size;
+    memcpy(buf, src->ptr, max);
     return buf;
 }
 
@@ -277,16 +269,14 @@ size_t str_rfind_nth(const string_t* string, char c, size_t n) {
 }
 
 int str_fgetln_n(string_t* dest, FILE* fp, size_t max) {
-    size_t len;
     ++max;
 
     if (max > dest->cap) {
         _string_detail_increase_cap(dest, max);
-        len = dest->cap;
-    } else
-        len = max;
+        max = dest->cap;
+    }
 
-    return fgets(dest->ptr, len, fp) != NULL;
+    return fgets(dest->ptr, max, fp) != NULL;
 }
 
 void _string_detail_destructor(string_t* string) {

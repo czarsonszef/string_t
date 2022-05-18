@@ -78,7 +78,6 @@ size_t str_find(const string_t* string, char c);
 size_t str_rfind(const string_t* string, char c);
 size_t str_find_nth(const string_t* string, char c, size_t n);
 size_t str_rfind_nth(const string_t* string, char c, size_t n);
-int str_fgetln_n(string_t* dest, FILE* fp, size_t max);
 
 void _string_detail_set_cchp(string_t*, const char*);
 void _string_detail_set_cstp(string_t*, const string_t*);
@@ -97,7 +96,6 @@ int _string_detail_suf_cstp(const string_t*, const string_t*);
 #define str_add_cap(string, n) str_set_cap(&string, n + string.cap)
 #define str_clear(string) memset(string.ptr, '\0', string.size)
 #define str_is_empty(string) (string.size == 0)
-#define str_fgetln(string, file) (fgets(string.ptr, string.cap, file) != NULL)
 #define str_fwrite(string, file) fputs(string.ptr, file)
 
 #define str_set(pdest, src) _Generic((src),                     \
