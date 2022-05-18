@@ -81,18 +81,18 @@ int _string_detail_pre_cstp(const string_t*, const string_t*);
 int _string_detail_suf_cchp(const string_t*, const char*);
 int _string_detail_suf_cstp(const string_t*, const string_t*);
 
+#define str_free(string) free(string.ptr)
+#define str_add_cap(string, n) str_set_cap(&string, n + pstring.cap)
+#define str_clear(string) memset(string.ptr, '\0', string.size)
+#define str_is_empty(string) (string.size == 0)
+#define str_fgetln(string, file) (fgets(string.ptr, string.cap, file) != NULL)
+#define str_fwrite(string, file) (fputs(string.ptr, file))
+
 #if defined(__GNUC__) && defined(__has_attribute)
 #   if __has_attribute(__cleanup__)
 #       define STR_AUTO __attribute__((__cleanup__(_string_detail_destructor)))
 #   endif
 #endif
-
-#define str_free(string) free(string.ptr)
-#define str_add_cap(pstring, n) str_set_cap(pstring, n + pstring->cap)
-#define str_clear(pstring) memset(pstring->ptr, '\0', pstring->size)
-#define str_is_empty(string) (string.size == 0)
-#define str_fgetln(string, file) (fgets(string.ptr, string.cap, file) != NULL)
-#define str_fwrite(string, file) (fputs(string.ptr, file))
 
 #define str_set(pdest, src) _Generic((src),                     \
     char*: _string_detail_set_cchp,                             \
